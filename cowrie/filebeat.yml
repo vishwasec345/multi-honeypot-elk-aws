@@ -1,0 +1,16 @@
+filebeat.inputs:
+  - type: filestream
+    id: cowrie
+    paths:
+      - /cowrie-logs/cowrie.json*
+    parsers:
+      - ndjson:
+          target: ""
+          overwrite_keys: true
+          add_error_key: true
+output.elasticsearch:
+  hosts: ["http://<ELK-PRIVATE-IP>:9200"]
+  index: "cowrie-%{+yyyy.MM.dd}"
+setup.template.name: "cowrie"
+setup.template.pattern: "cowrie-*"
+setup.ilm.enabled: false

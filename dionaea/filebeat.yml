@@ -1,0 +1,14 @@
+filebeat.inputs:
+  - type: filestream
+    id: dionaea
+    paths:
+      - /dionaea-logs/dionaea.log*
+    fields:
+      honeypot: dionaea
+    fields_under_root: true
+output.elasticsearch:
+  hosts: ["http://<ELK-PRIVATE-IP>:9200"]
+  index: "dionaea-%{+yyyy.MM.dd}"
+setup.template.name: "dionaea"
+setup.template.pattern: "dionaea-*"
+setup.ilm.enabled: false

@@ -1,0 +1,34 @@
+services:
+  dionaea:
+    image: dinotools/dionaea:latest
+    container_name: dionaea
+    restart: unless-stopped
+    ports:
+      - "21:21"
+      - "42:42"
+      - "69:69/udp"
+      - "80:80"
+      - "135:135"
+      - "443:443"
+      - "445:445"
+      - "1433:1433"
+      - "1723:1723"
+      - "1883:1883"
+      - "1900:1900/udp"
+      - "3306:3306"
+      - "5060:5060"
+      - "5060:5060/udp"
+      - "5061:5061"
+      - "11211:11211"
+    volumes:
+      - /opt/dionaea/log:/opt/dionaea/var/log/dionaea
+      - /opt/dionaea/lib:/opt/dionaea/var/lib/dionaea
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.15.0
+    container_name: filebeat
+    restart: unless-stopped
+    user: root
+    command: ["filebeat", "-e", "--strict.perms=false"]
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /opt/dionaea/log:/dionaea-logs:ro

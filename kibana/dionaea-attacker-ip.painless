@@ -1,0 +1,18 @@
+// Kibana runtime field: attacker_ip (type: keyword) on the dionaea-* data view.
+// Extracts the source IP from lines like:
+//   accepted connection from 207.90.244.14:45742 to 172.18.0.3:443
+// Format: Url, template https://www.virustotal.com/gui/ip-address/{{value}}
+// Reads params._source.message because message.keyword is dropped for long lines
+// (Elasticsearch ignore_above: 256).
+if (params._source.containsKey('message') && params._source.message != null) {
+  String msg = params._source.message;
+  String prefix = "accepted connection from ";
+  int startIdx = msg.indexOf(prefix);
+  if (startIdx != -1) {
+    int ipStart = startIdx + prefix.length();
+    int colonIdx = msg.indexOf(':', ipStart);
+    if (colonIdx != -1 && colonIdx > ipStart) {
+      emit(msg.substring(ipStart, colonIdx).trim());
+    }
+  }
+}
